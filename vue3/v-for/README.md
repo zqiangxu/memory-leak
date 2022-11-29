@@ -1,0 +1,1 @@
+v-for 在 vue.global.js 下存在内存泄漏，但是在 vue.global.prod.js 没有内存问题。
