@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <button id="remove" @click="remove">remove</button>
+        <div v-if="showMessage">
+           <memory class="img-element"/>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js"></script>
+    <!--
+    由于 window.resize 内部持有了组件的实例.所以导致组件虽然被卸载.但是内存依然无法释放.同时组件的节点也会变成游离节点
+    -->
+    <script type="text/javascript">
+        const { createApp } = Vue;
+
+        const App = {
+            components: {
+
+            },
+            data() {
+                return {
+                    showMessage: true,
+                    message: 'Hello Vue!'
+                }
+            },
+            methods: {
+                remove(){
+                    this.showMessage = false;
+                }
+            }
+        };
+
+        const app = createApp(App);
+        app.component('memory', {
+            data() {
+                return {
+                    count: 1,
+                }
+            },
+            mounted() {
+                window.resize = () => {
+                    console.error(this.$refs.container);
+                };
+            },
+            template: `
+            <div id="container" ref="container">
+                <div>memory-leak</div>
+            </div>
+            `
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
